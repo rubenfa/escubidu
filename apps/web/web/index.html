@@ -18,17 +18,25 @@
 </head>
 
 <body>
-    <div class="simulator">
-      <form>
-        <label for="latitude">Latitude:</label>
-        <input type="text" id="latitude" name="latitude" placeholder="40.4169"/>
+    <div class="left-panel">
+        <div class="simulator">
+            <form>
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" placeholder="40.4169"/>
 
-        <label for="longitude">Longitude:</label>
-        <input type="text" id="longitude" name="longitude" placeholder="-3.7035"/>
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" placeholder="-3.7035"/>
 
-        <button id="send">Send</button>
-        <button id="render">Render</button>
-      </form>
+                <button id="send">Send</button>
+                <button id="render">Render</button>
+            </form>
+        </div>
+
+        <div class="geolocation">
+            <form>
+                <button id="geolocate">Geolocate yourself</button>
+            </form>
+        </div>
     </div>
 
     <div id="map"></div>
@@ -42,6 +50,7 @@
     <script src="./js/routes.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/simulator.js"></script>
+    <script src="./js/geolocation.js"></script>
 </body>
 
 </html>

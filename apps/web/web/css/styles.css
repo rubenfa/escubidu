@@ -14,21 +14,32 @@ body {
     margin-top: 8px;
 }
 
+.left-panel {
+    width: 200px;
+    float: left;
+}
+
 .simulator {
-  border: 1px solid red;
-  width: 200px;
-  float: left;
+    border: 1px solid red;
 }
 
 .simulator label {
-  width: 100%;
+    width: 100%;
 }
 
 .simulator input {
-  width: 90%;
+    width: 90%;
 }
 
 .simulator button {
-  width: 49%;
+    width: 48%;
+}
+
+.geolocation {
+    border: 1px solid red;
+}
+
+.geolocation button {
+    width: 100%;
 }
 
