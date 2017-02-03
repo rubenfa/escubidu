@@ -1,6 +1,6 @@
 defmodule RouteTracker do
   @moduledoc """
-  Lleva el control de la posición de un usuario, diciendo dónde está en cada momento y guardando en base de datos su posición
+  Lleva el control de la posición de un usuario, diciendo dónde está en cada momento
   """
 
   use GenServer
