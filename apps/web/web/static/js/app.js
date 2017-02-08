@@ -20,6 +20,42 @@ import "phoenix_html"
 
 // import socket from "./socket"
 import $ from "jquery";
+import L from "leaflet";
 
-const map = $('#map');
-console.log('map is:', map);
+$(document).ready(function() {
+
+    /**
+     * Render some markers to learn how to render them
+     */
+    function renderMarkers(map) {
+        var checa = [ 40.588843, -1.789702 ];
+        var madrid = [ 40.416887, -3.703489 ];
+        var valladolid = [ 41.652271, -4.728628 ];
+
+        var markers = [
+            checa,
+            madrid,
+            valladolid
+        ];
+
+        markers.forEach(function(marker) {
+            L.marker(marker).addTo(map);
+        });
+    }
+  
+    var centerMap = [ 40.6390, -3.1229 ];
+    // choose map providers between: https://leaflet-extras.github.io/leaflet-providers/preview/
+    var openStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+
+    // create the map
+    map = L.map('map', {
+        center: centerMap,
+        zoom: 8,
+        layers: [ openStreetMap ]
+    });
+
+    // renderMarkers(map);
+});
