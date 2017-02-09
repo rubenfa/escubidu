@@ -25282,10 +25282,10 @@ exports.default = socket;
 });
 
 ;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
 require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("process/browser.js", "process");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");process = require('process');require.register("___globals___", function(exports, require, module) {
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");
+require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
