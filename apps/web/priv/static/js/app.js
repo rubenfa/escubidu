@@ -25186,13 +25186,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     });
 
     // create the map
-    map = _leaflet2.default.map('map', {
-        center: centerMap,
-        zoom: 8,
-        layers: [openStreetMap]
-    });
+    var map = _leaflet2.default.map('map').setView(centerMap, 8);
 
-    // renderMarkers(map);
+    _leaflet2.default.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    renderMarkers(map);
 }); // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -25282,9 +25283,9 @@ exports.default = socket;
 });
 
 ;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("jquery/dist/jquery.js", "jquery");
 require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
