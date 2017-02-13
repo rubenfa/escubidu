@@ -19,8 +19,9 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
-import $ from "jquery";
-import L from "leaflet";
+import $ from 'jquery';
+import L from 'leaflet';
+import MapBuilder from './map_builder';
 
 $(document).ready(function() {
 
@@ -43,21 +44,6 @@ $(document).ready(function() {
         });
     }
   
-    var centerMap = [ 40.6390, -3.1229 ];
-    // choose map providers between: https://leaflet-extras.github.io/leaflet-providers/preview/
-    var openStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-
-    // create the map
-    const map = L.map('map')
-                 .setView(centerMap, 8);
-    
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
+    const map = MapBuilder.build('map');
     renderMarkers(map);
 });

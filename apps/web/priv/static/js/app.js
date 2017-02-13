@@ -25141,26 +25141,37 @@ process.umask = function() { return 0; };
   })();
 });
 require.register("web/static/js/app.js", function(exports, require, module) {
-"use strict";
+'use strict';
 
-require("phoenix_html");
+require('phoenix_html');
 
-var _jquery = require("jquery");
+var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _leaflet = require("leaflet");
+var _leaflet = require('leaflet');
 
 var _leaflet2 = _interopRequireDefault(_leaflet);
 
+var _map_builder = require('./map_builder');
+
+var _map_builder2 = _interopRequireDefault(_map_builder);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
+// Brunch automatically concatenates all files in your
+// watched paths. Those paths can be configured at
+// config.paths.watched in "brunch-config.js".
 //
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
+// However, those files will only be executed if
+// explicitly imported. The only exception are files
+// in vendor, which are never wrapped in imports and
+// therefore are always executed.
 
-// import socket from "./socket"
+// Import dependencies
+//
+// If you no longer want to use a dependency, remember
+// to also remove its path from "config.paths.watched".
 (0, _jquery2.default)(document).ready(function () {
 
     /**
@@ -25178,35 +25189,51 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         });
     }
 
-    var centerMap = [40.6390, -3.1229];
-    // choose map providers between: https://leaflet-extras.github.io/leaflet-providers/preview/
-    var openStreetMap = _leaflet2.default.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-
-    // create the map
-    var map = _leaflet2.default.map('map').setView(centerMap, 8);
-
-    _leaflet2.default.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
+    var map = _map_builder2.default.build('map');
     renderMarkers(map);
-}); // Brunch automatically concatenates all files in your
-// watched paths. Those paths can be configured at
-// config.paths.watched in "brunch-config.js".
-//
-// However, those files will only be executed if
-// explicitly imported. The only exception are files
-// in vendor, which are never wrapped in imports and
-// therefore are always executed.
+});
 
-// Import dependencies
+// Import local files
 //
-// If you no longer want to use a dependency, remember
-// to also remove its path from "config.paths.watched".
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+});
+
+require.register("web/static/js/map_builder.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _leaflet = require('leaflet');
+
+var _leaflet2 = _interopRequireDefault(_leaflet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CENTER_MAP = [40.6390, -3.1229];
+var INITIAL_ZOOM_LEVEL = 8;
+var OSM_TILES = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var OSM_OPTIONS = {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+};
+
+function build(elementId) {
+    // create the map
+    var map = _leaflet2.default.map(elementId).setView(CENTER_MAP, INITIAL_ZOOM_LEVEL);
+
+    _leaflet2.default.tileLayer(OSM_TILES, OSM_OPTIONS).addTo(map);
+
+    return map;
+}
+
+var MapBuilder = { build: build };
+
+exports.default = MapBuilder;
 });
 
 require.register("web/static/js/socket.js", function(exports, require, module) {
@@ -25284,8 +25311,8 @@ exports.default = socket;
 
 ;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");
 require.alias("jquery/dist/jquery.js", "jquery");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
 require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
