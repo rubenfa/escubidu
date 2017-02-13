@@ -25157,8 +25157,21 @@ var _map_builder = require('./map_builder');
 
 var _map_builder2 = _interopRequireDefault(_map_builder);
 
+var _example_markers = require('./example_markers');
+
+var _example_markers2 = _interopRequireDefault(_example_markers);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -25172,33 +25185,41 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-(0, _jquery2.default)(document).ready(function () {
-
-    /**
-     * Render some markers to learn how to render them
-     */
-    function renderMarkers(map) {
-        var checa = [40.588843, -1.789702];
-        var madrid = [40.416887, -3.703489];
-        var valladolid = [41.652271, -4.728628];
-
-        var markers = [checa, madrid, valladolid];
-
-        markers.forEach(function (marker) {
-            _leaflet2.default.marker(marker).addTo(map);
-        });
-    }
-
-    var map = _map_builder2.default.build('map');
-    renderMarkers(map);
+var map = _map_builder2.default.build(MAP_ELEMENT_ID);
+_example_markers2.default.renderInto(map);
 });
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
+require.register("web/static/js/example_markers.js", function(exports, require, module) {
+'use strict';
 
-// import socket from "./socket"
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _leaflet = require('leaflet');
+
+var _leaflet2 = _interopRequireDefault(_leaflet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Render some markers to learn how to render them
+ */
+function renderInto(map) {
+    var checa = [40.588843, -1.789702];
+    var madrid = [40.416887, -3.703489];
+    var valladolid = [41.652271, -4.728628];
+
+    var markers = [checa, madrid, valladolid];
+
+    markers.forEach(function (marker) {
+        _leaflet2.default.marker(marker).addTo(map);
+    });
+}
+
+var ExampleMarkers = { renderInto: renderInto };
+
+exports.default = ExampleMarkers;
 });
 
 require.register("web/static/js/map_builder.js", function(exports, require, module) {

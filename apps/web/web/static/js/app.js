@@ -22,28 +22,11 @@ import "phoenix_html"
 import $ from 'jquery';
 import L from 'leaflet';
 import MapBuilder from './map_builder';
+import ExampleMarkers from './example_markers';
 
-$(document).ready(function() {
+const MAP_ELEMENT_ID = 'map';
 
-    /**
-     * Render some markers to learn how to render them
-     */
-    function renderMarkers(map) {
-        var checa = [ 40.588843, -1.789702 ];
-        var madrid = [ 40.416887, -3.703489 ];
-        var valladolid = [ 41.652271, -4.728628 ];
+// Here starts our application
+const map = MapBuilder.build(MAP_ELEMENT_ID);
+ExampleMarkers.renderInto(map);
 
-        var markers = [
-            checa,
-            madrid,
-            valladolid
-        ];
-
-        markers.forEach(function(marker) {
-            L.marker(marker).addTo(map);
-        });
-    }
-  
-    const map = MapBuilder.build('map');
-    renderMarkers(map);
-});
