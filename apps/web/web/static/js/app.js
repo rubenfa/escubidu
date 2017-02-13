@@ -19,8 +19,6 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
-import $ from 'jquery';
-import L from 'leaflet';
 import MapBuilder from './map_builder';
 import ExampleMarkers from './example_markers';
 
