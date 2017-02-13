@@ -1,0 +1,11 @@
+
+body {
+  background-color: #b5d0d0;
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  height: 100vh;
+}
+
