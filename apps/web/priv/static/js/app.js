@@ -14744,8 +14744,21 @@ var _geolocation_handler = require('./geolocation_handler');
 
 var _geolocation_handler2 = _interopRequireDefault(_geolocation_handler);
 
+var _console_location_listener = require('./console_location_listener');
+
+var _console_location_listener2 = _interopRequireDefault(_console_location_listener);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14759,17 +14772,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
-
-
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
 var map = _map_builder2.default.build(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14777,6 +14779,23 @@ _example_markers2.default.renderInto(map);
 var btnGeolocate = document.getElementById('geolocate');
 var geolocation = new _geolocation_handler2.default();
 geolocation.configure(btnGeolocate);
+geolocation.addListener(new _console_location_listener2.default());
+});
+
+require.register("web/static/js/console_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// Location listeners must implement `newLocation` method
+function ConsoleLocationListener() {}
+
+ConsoleLocationListener.prototype.newLocation = function () {
+    console.log('new location listened');
+};
+
+exports.default = ConsoleLocationListener;
 });
 
 require.register("web/static/js/example_markers.js", function(exports, require, module) {
@@ -14910,6 +14929,22 @@ function build(elementId) {
 var MapBuilder = { build: build };
 
 exports.default = MapBuilder;
+});
+
+require.register("web/static/js/marker_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function ConsoleLocationListener() {}
+
+// Location listeners must implement `newLocation` method
+ConsoleLocationListener.prototype.newLocation = function () {
+    console.log('new location listened');
+};
+
+exports.default = ConsoleLocationListener;
 });
 
 require.register("web/static/js/socket.js", function(exports, require, module) {

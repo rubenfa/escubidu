@@ -22,6 +22,7 @@ import "phoenix_html"
 import MapBuilder from './map_builder';
 import ExampleMarkers from './example_markers';
 import GeolocationHandler from './geolocation_handler';
+import ConsoleLocationListener from './console_location_listener';
 
 const MAP_ELEMENT_ID = 'map';
 
@@ -33,4 +34,5 @@ ExampleMarkers.renderInto(map);
 const btnGeolocate = document.getElementById('geolocate');
 const geolocation = new GeolocationHandler();
 geolocation.configure(btnGeolocate);
+geolocation.addListener(new ConsoleLocationListener());
 
