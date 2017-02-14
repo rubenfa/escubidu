@@ -14748,17 +14748,12 @@ var _console_location_listener = require('./console_location_listener');
 
 var _console_location_listener2 = _interopRequireDefault(_console_location_listener);
 
+var _marker_location_listener = require('./marker_location_listener');
+
+var _marker_location_listener2 = _interopRequireDefault(_marker_location_listener);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14772,6 +14767,17 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
 var map = _map_builder2.default.build(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14780,6 +14786,7 @@ var btnGeolocate = document.getElementById('geolocate');
 var geolocation = new _geolocation_handler2.default();
 geolocation.configure(btnGeolocate);
 geolocation.addListener(new _console_location_listener2.default());
+geolocation.addListener(new _marker_location_listener2.default(map));
 });
 
 require.register("web/static/js/console_location_listener.js", function(exports, require, module) {
@@ -14845,9 +14852,14 @@ var locationWatchId = void 0;
 var watching = false;
 var listeners = [];
 
-function onCurrentLocationChanged() {
+function onCurrentLocationChanged(location) {
+    var locationCoords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+    };
+
     listeners.forEach(function (listener) {
-        return listener.newLocation();
+        return listener.newLocation(locationCoords);
     });
 }
 
@@ -14937,14 +14949,29 @@ require.register("web/static/js/marker_location_listener.js", function(exports, 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function ConsoleLocationListener() {}
+
+var _leaflet = require('leaflet');
+
+var _leaflet2 = _interopRequireDefault(_leaflet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function MarkerLocationListener(map) {
+    this.map = map;
+}
 
 // Location listeners must implement `newLocation` method
-ConsoleLocationListener.prototype.newLocation = function () {
-    console.log('new location listened');
+MarkerLocationListener.prototype.newLocation = function (_ref) {
+    var latitude = _ref.latitude,
+        longitude = _ref.longitude;
+
+    console.log('new marker will be drawn');
+
+    // adds the location to the map
+    _leaflet2.default.marker([latitude, longitude]).addTo(this.map);
 };
 
-exports.default = ConsoleLocationListener;
+exports.default = MarkerLocationListener;
 });
 
 require.register("web/static/js/socket.js", function(exports, require, module) {

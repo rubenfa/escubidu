@@ -6,8 +6,13 @@ let locationWatchId;
 let watching = false;
 let listeners = [];
 
-function onCurrentLocationChanged() {
-    listeners.forEach(listener => listener.newLocation());
+function onCurrentLocationChanged(location) {
+    const locationCoords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+    };
+
+    listeners.forEach(listener => listener.newLocation(locationCoords));
 }
 
 function stopWatching() {
