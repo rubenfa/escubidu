@@ -21,10 +21,16 @@ import "phoenix_html"
 // import socket from "./socket"
 import MapBuilder from './map_builder';
 import ExampleMarkers from './example_markers';
+import GeolocationHandler from './geolocation_handler';
 
 const MAP_ELEMENT_ID = 'map';
 
 // Here starts our application
 const map = MapBuilder.build(MAP_ELEMENT_ID);
 ExampleMarkers.renderInto(map);
+
+// Start geolocation
+const btnGeolocate = document.getElementById('geolocate');
+const geolocation = new GeolocationHandler();
+geolocation.configure(btnGeolocate);
 

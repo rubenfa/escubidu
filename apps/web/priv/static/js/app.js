@@ -14740,17 +14740,12 @@ var _example_markers = require('./example_markers');
 
 var _example_markers2 = _interopRequireDefault(_example_markers);
 
+var _geolocation_handler = require('./geolocation_handler');
+
+var _geolocation_handler2 = _interopRequireDefault(_geolocation_handler);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14764,8 +14759,24 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
 var map = _map_builder2.default.build(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
+
+// Start geolocation
+var btnGeolocate = document.getElementById('geolocate');
+var geolocation = new _geolocation_handler2.default();
+geolocation.configure(btnGeolocate);
 });
 
 require.register("web/static/js/example_markers.js", function(exports, require, module) {
@@ -14799,6 +14810,71 @@ function renderInto(map) {
 var ExampleMarkers = { renderInto: renderInto };
 
 exports.default = ExampleMarkers;
+});
+
+require.register("web/static/js/geolocation_handler.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var STOP_WATCHING_TEXT = 'Stop';
+var START_WATCHING_TEXT = 'Start';
+
+var btnGeolocate = void 0;
+var locationWatchId = void 0;
+var watching = false;
+var listeners = [];
+
+function onCurrentLocationChanged() {
+    listeners.forEach(function (listener) {
+        return listener.newLocation();
+    });
+}
+
+function stopWatching() {
+    watching = false;
+    btnGeolocate.innerText = START_WATCHING_TEXT;
+    navigator.geolocation.clearWatch(locationWatchId);
+}
+
+function startWatching() {
+    watching = true;
+    btnGeolocate.innerText = STOP_WATCHING_TEXT;
+    locationWatchId = navigator.geolocation.watchPosition(onCurrentLocationChanged);
+}
+
+function onButtonGeolocateClick(event) {
+    event.preventDefault();
+
+    if (!navigator || !navigator.geolocation) {
+        alert('No se puede usar geolocalización en este navegador');
+        return;
+    }
+
+    if (watching) {
+        stopWatching();
+        return;
+    }
+
+    startWatching();
+}
+
+// constructor
+// This is the exported function/class
+function GeolocationHandler() {}
+
+GeolocationHandler.prototype.configure = function (element) {
+    btnGeolocate = element;
+    btnGeolocate.innerText = START_WATCHING_TEXT;
+    btnGeolocate.addEventListener('click', onButtonGeolocateClick);
+};
+
+GeolocationHandler.prototype.addListener = function (listener) {
+    listeners.push(listener);
+};
+
+exports.default = GeolocationHandler;
 });
 
 require.register("web/static/js/map_builder.js", function(exports, require, module) {
@@ -14909,9 +14985,9 @@ channel.join().receive("ok", function (resp) {
 exports.default = socket;
 });
 
-;require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
+;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
