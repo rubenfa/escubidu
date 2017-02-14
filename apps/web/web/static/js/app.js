@@ -19,45 +19,12 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
-import $ from "jquery";
-import L from "leaflet";
+import MapBuilder from './map_builder';
+import ExampleMarkers from './example_markers';
 
-$(document).ready(function() {
+const MAP_ELEMENT_ID = 'map';
 
-    /**
-     * Render some markers to learn how to render them
-     */
-    function renderMarkers(map) {
-        var checa = [ 40.588843, -1.789702 ];
-        var madrid = [ 40.416887, -3.703489 ];
-        var valladolid = [ 41.652271, -4.728628 ];
+// Here starts our application
+const map = MapBuilder.build(MAP_ELEMENT_ID);
+ExampleMarkers.renderInto(map);
 
-        var markers = [
-            checa,
-            madrid,
-            valladolid
-        ];
-
-        markers.forEach(function(marker) {
-            L.marker(marker).addTo(map);
-        });
-    }
-  
-    var centerMap = [ 40.6390, -3.1229 ];
-    // choose map providers between: https://leaflet-extras.github.io/leaflet-providers/preview/
-    var openStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-
-    // create the map
-    const map = L.map('map')
-                 .setView(centerMap, 8);
-    
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    renderMarkers(map);
-});
