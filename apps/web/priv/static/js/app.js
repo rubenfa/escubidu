@@ -14752,8 +14752,21 @@ var _marker_location_listener = require('./marker_location_listener');
 
 var _marker_location_listener2 = _interopRequireDefault(_marker_location_listener);
 
+var _list_location_listener = require('./list_location_listener');
+
+var _list_location_listener2 = _interopRequireDefault(_list_location_listener);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14767,17 +14780,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
-
-
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
 var map = _map_builder2.default.build(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14785,8 +14787,13 @@ _example_markers2.default.renderInto(map);
 var btnGeolocate = document.getElementById('geolocate');
 var geolocation = new _geolocation_handler2.default();
 geolocation.configure(btnGeolocate);
+
+// Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
 geolocation.addListener(new _marker_location_listener2.default(map));
+var ulLocations = document.getElementById('locations');
+var listListener = new _list_location_listener2.default(ulLocations);
+geolocation.addListener(listListener);
 });
 
 require.register("web/static/js/console_location_listener.js", function(exports, require, module) {
@@ -14906,6 +14913,36 @@ GeolocationHandler.prototype.addListener = function (listener) {
 };
 
 exports.default = GeolocationHandler;
+});
+
+require.register("web/static/js/list_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var ul = void 0,
+    locationId = 0;
+
+function ListLocationListener(ulElement) {
+    ul = ulElement;
+}
+
+// Location listeners must implement `newLocation` method
+ListLocationListener.prototype.newLocation = function (_ref) {
+    var latitude = _ref.latitude,
+        longitude = _ref.longitude;
+
+    locationId++;
+
+    var li = document.createElement('li');
+    var text = document.createTextNode('(#' + locationId + ') Lat: ' + latitude + ', Long: ' + longitude);
+    li.appendChild(text);
+
+    ul.insertBefore(li, ul.firstChild);
+};
+
+exports.default = ListLocationListener;
 });
 
 require.register("web/static/js/map_builder.js", function(exports, require, module) {
@@ -15047,8 +15084,8 @@ channel.join().receive("ok", function (resp) {
 exports.default = socket;
 });
 
-;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+;require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
