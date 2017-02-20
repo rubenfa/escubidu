@@ -21,10 +21,26 @@ import "phoenix_html"
 // import socket from "./socket"
 import MapBuilder from './map_builder';
 import ExampleMarkers from './example_markers';
+import GeolocationHandler from './geolocation_handler';
+import ConsoleLocationListener from './console_location_listener';
+import MarkerLocationListener from './marker_location_listener';
+import ListLocationListener from './list_location_listener';
 
 const MAP_ELEMENT_ID = 'map';
 
 // Here starts our application
 const map = MapBuilder.build(MAP_ELEMENT_ID);
 ExampleMarkers.renderInto(map);
+
+// Start geolocation
+const btnGeolocate = document.getElementById('geolocate');
+const geolocation = new GeolocationHandler();
+geolocation.configure(btnGeolocate);
+
+// Add location listeners
+geolocation.addListener(new ConsoleLocationListener());
+geolocation.addListener(new MarkerLocationListener(map));
+const ulLocations = document.getElementById('locations');
+const listListener = new ListLocationListener(ulLocations);
+geolocation.addListener(listListener);
 
