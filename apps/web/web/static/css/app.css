@@ -15,11 +15,23 @@ body {
     border-right: solid 2px #b29ac3;
 }
 
+.simulator label {
+    width: 100%;
+    margin: 0 5%;
+}
+
+.simulator input,
+.simulator button {
+    width: 90%;
+    margin: 0 5%;
+}
+
 .geolocation {
     margin-top: 1em;
 }
 
 .geolocation button {
-    width: 100%;
+    width: 90%;
+    margin: 0 5%;
 }
 

@@ -25,6 +25,7 @@ import GeolocationHandler from './geolocation_handler';
 import ConsoleLocationListener from './console_location_listener';
 import MarkerLocationListener from './marker_location_listener';
 import ListLocationListener from './list_location_listener';
+import SimulatorHandler from './simulator_handler';
 
 const MAP_ELEMENT_ID = 'map';
 
@@ -43,4 +44,16 @@ geolocation.addListener(new MarkerLocationListener(map));
 const ulLocations = document.getElementById('locations');
 const listListener = new ListLocationListener(ulLocations);
 geolocation.addListener(listListener);
+
+// Create and configure simulator
+const latitudeInput = document.getElementById('latitude');
+const lontitudeInput = document.getElementById('longitude');
+const renderButton = document.getElementById('render');
+const simulator = new SimulatorHandler();
+simulator.configure(latitudeInput, lontitudeInput, renderButton);
+
+// add geolocaiton listeners to the simulator
+simulator.addListener(new ConsoleLocationListener());
+simulator.addListener(new MarkerLocationListener(map));
+simulator.addListener(listListener);
 

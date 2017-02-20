@@ -14756,17 +14756,12 @@ var _list_location_listener = require('./list_location_listener');
 
 var _list_location_listener2 = _interopRequireDefault(_list_location_listener);
 
+var _simulator_handler = require('./simulator_handler');
+
+var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14780,6 +14775,17 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
 var map = _map_builder2.default.build(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14794,6 +14800,18 @@ geolocation.addListener(new _marker_location_listener2.default(map));
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
+
+// Create and configure simulator
+var latitudeInput = document.getElementById('latitude');
+var lontitudeInput = document.getElementById('longitude');
+var renderButton = document.getElementById('render');
+var simulator = new _simulator_handler2.default();
+simulator.configure(latitudeInput, lontitudeInput, renderButton);
+
+// add geolocaiton listeners to the simulator
+simulator.addListener(new _console_location_listener2.default());
+simulator.addListener(new _marker_location_listener2.default(map));
+simulator.addListener(listListener);
 });
 
 require.register("web/static/js/console_location_listener.js", function(exports, require, module) {
@@ -15011,6 +15029,67 @@ MarkerLocationListener.prototype.newLocation = function (_ref) {
 exports.default = MarkerLocationListener;
 });
 
+require.register("web/static/js/simulator_handler.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var latitude = void 0;
+var longitude = void 0;
+var render = void 0;
+var listeners = [];
+
+function getFloat($input) {
+    var value = $input.value;
+    return parseFloat(value);
+}
+
+function onRenderButtonClick(event) {
+    event.preventDefault();
+
+    var latitudeValue = getFloat(latitude);
+    if (isNaN(latitudeValue)) {
+        alert('Latitude should be a number like "12.34"');
+        return;
+    }
+
+    var longitudeValue = getFloat(longitude);
+    if (isNaN(longitudeValue)) {
+        alert('Longitude should be a number like "12.34"');
+        return;
+    }
+
+    var locationCoords = {
+        latitude: latitudeValue,
+        longitude: longitudeValue
+    };
+
+    listeners.forEach(function (listener) {
+        return listener.newLocation(locationCoords);
+    });
+}
+
+// constructor
+// This is the exported function/class
+function SimulatorHandler() {}
+
+SimulatorHandler.prototype.configure = function (latitudeInput, lontitudeInput, renderButton) {
+    latitude = latitudeInput;
+    longitude = lontitudeInput;
+    render = renderButton;
+
+    render.addEventListener('click', onRenderButtonClick);
+};
+
+SimulatorHandler.prototype.addListener = function (listener) {
+    listeners.push(listener);
+};
+
+exports.default = SimulatorHandler;
+});
+
 require.register("web/static/js/socket.js", function(exports, require, module) {
 "use strict";
 
@@ -15084,9 +15163,9 @@ channel.join().receive("ok", function (resp) {
 exports.default = socket;
 });
 
-;require.alias("leaflet/dist/leaflet-src.js", "leaflet");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
+;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 

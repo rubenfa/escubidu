@@ -1,4 +1,15 @@
 <div class="left-panel">
+    <div class="simulator">
+        <form>
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" placeholder="40.4169"/>
+
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" placeholder="-3.7035"/>
+
+            <button id="render">Render</button>
+        </form>
+    </div>
     <div class="geolocation">
         <form>
             <button id="geolocate">Geolocate yourself</button>
