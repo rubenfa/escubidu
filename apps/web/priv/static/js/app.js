@@ -14732,10 +14732,6 @@ require.register("web/static/js/app.js", function(exports, require, module) {
 
 require('phoenix_html');
 
-var _map_builder = require('./leaflet/map_builder');
-
-var _map_builder2 = _interopRequireDefault(_map_builder);
-
 var _leaflet_map = require('./leaflet/leaflet_map');
 
 var _leaflet_map2 = _interopRequireDefault(_leaflet_map);
@@ -14752,7 +14748,7 @@ var _console_location_listener = require('./console_location_listener');
 
 var _console_location_listener2 = _interopRequireDefault(_console_location_listener);
 
-var _marker_location_listener = require('./marker_location_listener');
+var _marker_location_listener = require('./geolocation/marker_location_listener');
 
 var _marker_location_listener2 = _interopRequireDefault(_marker_location_listener);
 
@@ -14766,16 +14762,6 @@ var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
-// const map = MapBuilder.build(MAP_ELEMENT_ID);
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14789,9 +14775,19 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-var leafletMap = new _leaflet_map2.default(MAP_ELEMENT_ID);
-// ExampleMarkers.renderIntoMap(map);
-_example_markers2.default.renderInto(leafletMap);
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+var map = new _leaflet_map2.default(MAP_ELEMENT_ID);
+_example_markers2.default.renderInto(map);
 
 // Start geolocation
 var btnGeolocate = document.getElementById('geolocate');
@@ -14800,7 +14796,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
-// geolocation.addListener(new MarkerLocationListener(map));
+geolocation.addListener(new _marker_location_listener2.default(map));
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
@@ -14814,7 +14810,7 @@ simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
 // add geolocaiton listeners to the simulator
 simulator.addListener(new _console_location_listener2.default());
-// simulator.addListener(new MarkerLocationListener(map));
+simulator.addListener(new _marker_location_listener2.default(map));
 simulator.addListener(listListener);
 });
 
@@ -14878,6 +14874,30 @@ function renderInto(map) {
 var ExampleMarkers = { renderIntoMap: renderIntoMap, renderInto: renderInto };
 
 exports.default = ExampleMarkers;
+});
+
+require.register("web/static/js/geolocation/marker_location_listener.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function MarkerLocationListener(map) {
+    this.map = map;
+}
+
+// Location listeners must implement `newLocation` method
+MarkerLocationListener.prototype.newLocation = function (_ref) {
+    var latitude = _ref.latitude,
+        longitude = _ref.longitude;
+
+    var marker = [latitude, longitude];
+    var markers = [marker];
+    this.map.addMarkers(markers);
+};
+
+exports.default = MarkerLocationListener;
 });
 
 require.register("web/static/js/geolocation_handler.js", function(exports, require, module) {
@@ -14995,41 +15015,6 @@ LeafletMap.prototype.addMarkers = function (markers) {
 exports.default = LeafletMap;
 });
 
-require.register("web/static/js/leaflet/map_builder.js", function(exports, require, module) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _leaflet = require('leaflet');
-
-var _leaflet2 = _interopRequireDefault(_leaflet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CENTER_MAP = [40.6390, -3.1229];
-var INITIAL_ZOOM_LEVEL = 8;
-var OSM_TILES = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-var OSM_OPTIONS = {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-};
-
-function build(elementId) {
-    // create the map
-    var map = _leaflet2.default.map(elementId).setView(CENTER_MAP, INITIAL_ZOOM_LEVEL);
-
-    _leaflet2.default.tileLayer(OSM_TILES, OSM_OPTIONS).addTo(map);
-
-    return map;
-}
-
-var MapBuilder = { build: build };
-
-exports.default = MapBuilder;
-});
-
 require.register("web/static/js/list_location_listener.js", function(exports, require, module) {
 'use strict';
 
@@ -15058,37 +15043,6 @@ ListLocationListener.prototype.newLocation = function (_ref) {
 };
 
 exports.default = ListLocationListener;
-});
-
-require.register("web/static/js/marker_location_listener.js", function(exports, require, module) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _leaflet = require('leaflet');
-
-var _leaflet2 = _interopRequireDefault(_leaflet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function MarkerLocationListener(map) {
-    this.map = map;
-}
-
-// Location listeners must implement `newLocation` method
-MarkerLocationListener.prototype.newLocation = function (_ref) {
-    var latitude = _ref.latitude,
-        longitude = _ref.longitude;
-
-    console.log('new marker will be drawn');
-
-    // adds the location to the map
-    _leaflet2.default.marker([latitude, longitude]).addTo(this.map);
-};
-
-exports.default = MarkerLocationListener;
 });
 
 require.register("web/static/js/simulator_handler.js", function(exports, require, module) {
