@@ -14732,9 +14732,13 @@ require.register("web/static/js/app.js", function(exports, require, module) {
 
 require('phoenix_html');
 
-var _map_builder = require('./map_builder');
+var _map_builder = require('./leaflet/map_builder');
 
 var _map_builder2 = _interopRequireDefault(_map_builder);
+
+var _leaflet_map = require('./leaflet/leaflet_map');
+
+var _leaflet_map2 = _interopRequireDefault(_leaflet_map);
 
 var _example_markers = require('./example_markers');
 
@@ -14762,6 +14766,16 @@ var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+// import socket from "./socket"
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+// const map = MapBuilder.build(MAP_ELEMENT_ID);
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14775,19 +14789,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
-
-
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var map = _map_builder2.default.build(MAP_ELEMENT_ID);
-_example_markers2.default.renderInto(map);
+var leafletMap = new _leaflet_map2.default(MAP_ELEMENT_ID);
+// ExampleMarkers.renderIntoMap(map);
+_example_markers2.default.renderInto(leafletMap);
 
 // Start geolocation
 var btnGeolocate = document.getElementById('geolocate');
@@ -14796,7 +14800,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
-geolocation.addListener(new _marker_location_listener2.default(map));
+// geolocation.addListener(new MarkerLocationListener(map));
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
@@ -14810,7 +14814,7 @@ simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
 // add geolocaiton listeners to the simulator
 simulator.addListener(new _console_location_listener2.default());
-simulator.addListener(new _marker_location_listener2.default(map));
+// simulator.addListener(new MarkerLocationListener(map));
 simulator.addListener(listListener);
 });
 
@@ -14846,7 +14850,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /**
  * Render some markers to learn how to render them
  */
-function renderInto(map) {
+function renderIntoMap(map) {
     var checa = [40.588843, -1.789702];
     var madrid = [40.416887, -3.703489];
     var valladolid = [41.652271, -4.728628];
@@ -14858,7 +14862,20 @@ function renderInto(map) {
     });
 }
 
-var ExampleMarkers = { renderInto: renderInto };
+/**
+ * Render some markers to learn how to render them
+ */
+function renderInto(map) {
+    var checa = [40.588843, -1.789702];
+    var madrid = [40.416887, -3.703489];
+    var valladolid = [41.652271, -4.728628];
+
+    var markers = [checa, madrid, valladolid];
+
+    map.addMarkers(markers);
+}
+
+var ExampleMarkers = { renderIntoMap: renderIntoMap, renderInto: renderInto };
 
 exports.default = ExampleMarkers;
 });
@@ -14933,37 +14950,52 @@ GeolocationHandler.prototype.addListener = function (listener) {
 exports.default = GeolocationHandler;
 });
 
-require.register("web/static/js/list_location_listener.js", function(exports, require, module) {
+require.register("web/static/js/leaflet/leaflet_map.js", function(exports, require, module) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var ul = void 0,
-    locationId = 0;
 
-function ListLocationListener(ulElement) {
-    ul = ulElement;
-}
+var _leaflet = require('leaflet');
 
-// Location listeners must implement `newLocation` method
-ListLocationListener.prototype.newLocation = function (_ref) {
-    var latitude = _ref.latitude,
-        longitude = _ref.longitude;
+var _leaflet2 = _interopRequireDefault(_leaflet);
 
-    locationId++;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-    var li = document.createElement('li');
-    var text = document.createTextNode('(#' + locationId + ') Lat: ' + latitude + ', Long: ' + longitude);
-    li.appendChild(text);
-
-    ul.insertBefore(li, ul.firstChild);
+var CENTER_MAP = [40.6390, -3.1229];
+var INITIAL_ZOOM_LEVEL = 8;
+var OSM_TILES = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var OSM_OPTIONS = {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 };
 
-exports.default = ListLocationListener;
+var map = void 0;
+
+function build(elementId) {
+    // create the map
+    var map = _leaflet2.default.map(elementId).setView(CENTER_MAP, INITIAL_ZOOM_LEVEL);
+
+    _leaflet2.default.tileLayer(OSM_TILES, OSM_OPTIONS).addTo(map);
+
+    return map;
+}
+
+function LeafletMap(elementId) {
+    map = build(elementId);
+}
+
+LeafletMap.prototype.addMarkers = function (markers) {
+    markers.forEach(function (marker) {
+        _leaflet2.default.marker(marker).addTo(map);
+    });
+};
+
+exports.default = LeafletMap;
 });
 
-require.register("web/static/js/map_builder.js", function(exports, require, module) {
+require.register("web/static/js/leaflet/map_builder.js", function(exports, require, module) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14996,6 +15028,36 @@ function build(elementId) {
 var MapBuilder = { build: build };
 
 exports.default = MapBuilder;
+});
+
+require.register("web/static/js/list_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var ul = void 0,
+    locationId = 0;
+
+function ListLocationListener(ulElement) {
+    ul = ulElement;
+}
+
+// Location listeners must implement `newLocation` method
+ListLocationListener.prototype.newLocation = function (_ref) {
+    var latitude = _ref.latitude,
+        longitude = _ref.longitude;
+
+    locationId++;
+
+    var li = document.createElement('li');
+    var text = document.createTextNode('(#' + locationId + ') Lat: ' + latitude + ', Long: ' + longitude);
+    li.appendChild(text);
+
+    ul.insertBefore(li, ul.firstChild);
+};
+
+exports.default = ListLocationListener;
 });
 
 require.register("web/static/js/marker_location_listener.js", function(exports, require, module) {
@@ -15175,9 +15237,9 @@ exports.default = function () {
 };
 });
 
-;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+;require.alias("leaflet/dist/leaflet-src.js", "leaflet");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 

@@ -19,7 +19,8 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
-import MapBuilder from './map_builder';
+import MapBuilder from './leaflet/map_builder';
+import LeafletMap from './leaflet/leaflet_map';
 import ExampleMarkers from './example_markers';
 import GeolocationHandler from './geolocation_handler';
 import ConsoleLocationListener from './console_location_listener';
@@ -30,8 +31,10 @@ import SimulatorHandler from './simulator_handler';
 const MAP_ELEMENT_ID = 'map';
 
 // Here starts our application
-const map = MapBuilder.build(MAP_ELEMENT_ID);
-ExampleMarkers.renderInto(map);
+// const map = MapBuilder.build(MAP_ELEMENT_ID);
+const leafletMap = new LeafletMap(MAP_ELEMENT_ID);
+// ExampleMarkers.renderIntoMap(map);
+ExampleMarkers.renderInto(leafletMap);
 
 // Start geolocation
 const btnGeolocate = document.getElementById('geolocate');
@@ -40,7 +43,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new ConsoleLocationListener());
-geolocation.addListener(new MarkerLocationListener(map));
+// geolocation.addListener(new MarkerLocationListener(map));
 const ulLocations = document.getElementById('locations');
 const listListener = new ListLocationListener(ulLocations);
 geolocation.addListener(listListener);
@@ -54,6 +57,6 @@ simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
 // add geolocaiton listeners to the simulator
 simulator.addListener(new ConsoleLocationListener());
-simulator.addListener(new MarkerLocationListener(map));
+// simulator.addListener(new MarkerLocationListener(map));
 simulator.addListener(listListener);
 
