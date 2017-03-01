@@ -15163,6 +15163,18 @@ channel.join().receive("ok", function (resp) {
 exports.default = socket;
 });
 
+;require.register("web/static/js/something.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function () {
+  return 'something';
+};
+});
+
 ;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
 require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {

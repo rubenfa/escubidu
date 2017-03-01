@@ -41,8 +41,10 @@ exports.config = {
   paths: {
     // Dependencies and current project directories to watch
     watched: [
-      "web/static",
-      "test/static"
+      "web/static"
+
+      // uncomment this line if test files must be minified and served
+      // "test/static"
     ],
 
     // Where to compile files to

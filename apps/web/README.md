@@ -1,3 +1,7 @@
+# TODO 
+
+rchavarria: cómo montar los tests de JS con: https://gist.github.com/keichan34/2b8e31006a8b71a277ca
+
 # Web
 
 To start your Phoenix app:
