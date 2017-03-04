@@ -1,6 +1,9 @@
+import BrowserGeolocation from './browser_geolocation';
+
 const STOP_WATCHING_TEXT = 'Stop';
 const START_WATCHING_TEXT = 'Start';
 
+let geolocation;
 let btnGeolocate;
 let locationWatchId;
 let watching = false;
@@ -18,19 +21,19 @@ function onCurrentLocationChanged(location) {
 function stopWatching() {
     watching = false;
     btnGeolocate.innerText = START_WATCHING_TEXT;
-    navigator.geolocation.clearWatch(locationWatchId);
+    geolocation.reset();
 }
 
 function startWatching() {
     watching = true;
     btnGeolocate.innerText = STOP_WATCHING_TEXT;
-    locationWatchId = navigator.geolocation.watchPosition(onCurrentLocationChanged);
+    geolocation.setLocationCallback(onCurrentLocationChanged);
 }
 
 function onButtonGeolocateClick(event) {
     event.preventDefault();
 
-    if (!navigator || !navigator.geolocation) {
+    if (!geolocation.isAvailable()) {
         alert('No se puede usar geolocalización en este navegador');
         return;
     }
@@ -45,7 +48,9 @@ function onButtonGeolocateClick(event) {
 
 // constructor
 // This is the exported function/class
-function GeolocationHandler() { }
+function GeolocationHandler(browserGeolocation) {
+    geolocation = browserGeolocation;
+}
 
 GeolocationHandler.prototype.configure = function (element) {
     btnGeolocate = element;

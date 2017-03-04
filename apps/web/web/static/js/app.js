@@ -21,11 +21,12 @@ import "phoenix_html"
 // import socket from "./socket"
 import LeafletMap from './leaflet/leaflet_map';
 import ExampleMarkers from './leaflet/example_markers';
-import GeolocationHandler from './geolocation_handler';
-import ConsoleLocationListener from './console_location_listener';
-import MarkerLocationListener from './geolocation/marker_location_listener';
-import ListLocationListener from './list_location_listener';
-import SimulatorHandler from './simulator_handler';
+import BrowserGeolocation from './geolocation/browser_geolocation';
+import GeolocationHandler from './geolocation/geolocation_handler';
+import ConsoleLocationListener from './geolocation/listeners/console_location_listener';
+import MarkerLocationListener from './geolocation/listeners/marker_location_listener';
+import ListLocationListener from './geolocation/listeners/list_location_listener';
+import SimulatorHandler from './geolocation/simulator_handler';
 
 const MAP_ELEMENT_ID = 'map';
 
@@ -35,7 +36,7 @@ ExampleMarkers.renderInto(map);
 
 // Start geolocation
 const btnGeolocate = document.getElementById('geolocate');
-const geolocation = new GeolocationHandler();
+const geolocation = new GeolocationHandler(new BrowserGeolocation());
 geolocation.configure(btnGeolocate);
 
 // Add location listeners
