@@ -49,6 +49,7 @@ function onButtonGeolocateClick(event) {
 // constructor
 // This is the exported function/class
 function GeolocationHandler(browserGeolocation) {
+    watching = false;
     geolocation = browserGeolocation;
 }
 
