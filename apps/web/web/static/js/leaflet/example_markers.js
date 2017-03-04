@@ -1,5 +1,3 @@
-import L from 'leaflet';
-
 /**
  * Render some markers to learn how to render them
  */
