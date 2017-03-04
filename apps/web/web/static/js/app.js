@@ -20,7 +20,7 @@ import "phoenix_html"
 
 // import socket from "./socket"
 import LeafletMap from './leaflet/leaflet_map';
-import ExampleMarkers from './example_markers';
+import ExampleMarkers from './leaflet/example_markers';
 import GeolocationHandler from './geolocation_handler';
 import ConsoleLocationListener from './console_location_listener';
 import MarkerLocationListener from './geolocation/marker_location_listener';
