@@ -1,5 +1,3 @@
-import L from 'leaflet';
-
 /**
  * Render some markers to learn how to render them
  */
@@ -14,9 +12,7 @@ function renderInto(map) {
         valladolid
     ];
 
-    markers.forEach(function(marker) {
-        L.marker(marker).addTo(map);
-    });
+    map.addMarkers(markers);
 }
 
 const ExampleMarkers = { renderInto };

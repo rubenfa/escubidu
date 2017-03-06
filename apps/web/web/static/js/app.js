@@ -19,23 +19,24 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
-import MapBuilder from './map_builder';
-import ExampleMarkers from './example_markers';
-import GeolocationHandler from './geolocation_handler';
-import ConsoleLocationListener from './console_location_listener';
-import MarkerLocationListener from './marker_location_listener';
-import ListLocationListener from './list_location_listener';
-import SimulatorHandler from './simulator_handler';
+import LeafletMap from './leaflet/leaflet_map';
+import ExampleMarkers from './leaflet/example_markers';
+import BrowserGeolocation from './geolocation/browser_geolocation';
+import GeolocationHandler from './geolocation/geolocation_handler';
+import ConsoleLocationListener from './geolocation/listeners/console_location_listener';
+import MarkerLocationListener from './geolocation/listeners/marker_location_listener';
+import ListLocationListener from './geolocation/listeners/list_location_listener';
+import SimulatorHandler from './geolocation/simulator_handler';
 
 const MAP_ELEMENT_ID = 'map';
 
 // Here starts our application
-const map = MapBuilder.build(MAP_ELEMENT_ID);
+const map = new LeafletMap(MAP_ELEMENT_ID);
 ExampleMarkers.renderInto(map);
 
 // Start geolocation
 const btnGeolocate = document.getElementById('geolocate');
-const geolocation = new GeolocationHandler();
+const geolocation = new GeolocationHandler(new BrowserGeolocation());
 geolocation.configure(btnGeolocate);
 
 // Add location listeners

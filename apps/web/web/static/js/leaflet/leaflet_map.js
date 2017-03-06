@@ -8,6 +8,8 @@ const OSM_OPTIONS = {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 };
 
+let map;
+
 function build(elementId) {
     // create the map
     const map = L.map(elementId)
@@ -19,7 +21,15 @@ function build(elementId) {
     return map;
 }
 
-const MapBuilder = { build };
+function LeafletMap(elementId) {
+  map = build(elementId);
+}
 
-export default MapBuilder;
+LeafletMap.prototype.addMarkers = function (markers) {
+    markers.forEach(function(marker) {
+        L.marker(marker).addTo(map);
+    });
+};
+
+export default LeafletMap;
 
