@@ -2,6 +2,7 @@ defmodule Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :web
 
   socket "/socket", Web.UserSocket
+  socket "/locations_socket", Web.LocationsSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #

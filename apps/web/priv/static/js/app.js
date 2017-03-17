@@ -14728,53 +14728,48 @@ window.addEventListener('click', function (event) {
   })();
 });
 require.register("web/static/js/app.js", function(exports, require, module) {
-'use strict';
+"use strict";
 
-require('phoenix_html');
+require("phoenix_html");
 
-var _leaflet_map = require('./leaflet/leaflet_map');
+var _socket = require("./socket");
+
+var _socket2 = _interopRequireDefault(_socket);
+
+var _leaflet_map = require("./leaflet/leaflet_map");
 
 var _leaflet_map2 = _interopRequireDefault(_leaflet_map);
 
-var _example_markers = require('./leaflet/example_markers');
+var _example_markers = require("./leaflet/example_markers");
 
 var _example_markers2 = _interopRequireDefault(_example_markers);
 
-var _browser_geolocation = require('./geolocation/browser_geolocation');
+var _browser_geolocation = require("./geolocation/browser_geolocation");
 
 var _browser_geolocation2 = _interopRequireDefault(_browser_geolocation);
 
-var _geolocation_handler = require('./geolocation/geolocation_handler');
+var _geolocation_handler = require("./geolocation/geolocation_handler");
 
 var _geolocation_handler2 = _interopRequireDefault(_geolocation_handler);
 
-var _console_location_listener = require('./geolocation/listeners/console_location_listener');
+var _console_location_listener = require("./geolocation/listeners/console_location_listener");
 
 var _console_location_listener2 = _interopRequireDefault(_console_location_listener);
 
-var _marker_location_listener = require('./geolocation/listeners/marker_location_listener');
+var _marker_location_listener = require("./geolocation/listeners/marker_location_listener");
 
 var _marker_location_listener2 = _interopRequireDefault(_marker_location_listener);
 
-var _list_location_listener = require('./geolocation/listeners/list_location_listener');
+var _list_location_listener = require("./geolocation/listeners/list_location_listener");
 
 var _list_location_listener2 = _interopRequireDefault(_list_location_listener);
 
-var _simulator_handler = require('./geolocation/simulator_handler');
+var _simulator_handler = require("./geolocation/simulator_handler");
 
 var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14788,6 +14783,16 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
+
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
 var map = new _leaflet_map2.default(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -15131,7 +15136,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _phoenix = require("phoenix");
 
-var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
+var socket = new _phoenix.Socket("/locations_socket", { params: { token: window.userToken } });
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -15185,19 +15190,30 @@ var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken 
 socket.connect();
 
 // Now that you are connected, you can join channels with a topic:
-var channel = socket.channel("topic:subtopic", {});
+var channel = socket.channel("location:all", {});
 channel.join().receive("ok", function (resp) {
   console.log("Joined successfully", resp);
 }).receive("error", function (resp) {
   console.log("Unable to join", resp);
 });
 
+// send a msg after 3sg
+setTimeout(function () {
+  channel.push('new_msg', { body: 'Body of the message' });
+  console.log('msg sent');
+}, 3000);
+
+// show received msgs in the console
+channel.on('new_msg', function (payload) {
+  console.log('He recibido un cuerpo de msg:', payload.body);
+});
+
 exports.default = socket;
 });
 
-;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 

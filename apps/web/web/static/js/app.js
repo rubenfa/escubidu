@@ -18,7 +18,8 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-// import socket from "./socket"
+import socket from "./socket"
+
 import LeafletMap from './leaflet/leaflet_map';
 import ExampleMarkers from './leaflet/example_markers';
 import BrowserGeolocation from './geolocation/browser_geolocation';
