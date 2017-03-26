@@ -26,6 +26,7 @@ Channel.prototype.init = function () {
     });
 
   this.channel.on('location_message', payload => {
+    console.log('location_message messge received. payload:', payload);
     notify(payload, this.listeners);
   });
 }
@@ -40,7 +41,7 @@ Channel.prototype.send = function (body) {
 };
 
 Channel.prototype.addListener = function (listener) {
-  this.listeners.add(listener);
+  this.listeners.push(listener);
 };
 
 export default Channel;

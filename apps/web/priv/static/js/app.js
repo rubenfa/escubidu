@@ -14728,45 +14728,53 @@ window.addEventListener('click', function (event) {
   })();
 });
 require.register("web/static/js/app.js", function(exports, require, module) {
-"use strict";
+'use strict';
 
-require("phoenix_html");
+require('phoenix_html');
 
-var _socket = require("./socket");
-
-var _socket2 = _interopRequireDefault(_socket);
-
-var _leaflet_map = require("./leaflet/leaflet_map");
+var _leaflet_map = require('./leaflet/leaflet_map');
 
 var _leaflet_map2 = _interopRequireDefault(_leaflet_map);
 
-var _example_markers = require("./leaflet/example_markers");
+var _example_markers = require('./leaflet/example_markers');
 
 var _example_markers2 = _interopRequireDefault(_example_markers);
 
-var _browser_geolocation = require("./geolocation/browser_geolocation");
+var _browser_geolocation = require('./geolocation/browser_geolocation');
 
 var _browser_geolocation2 = _interopRequireDefault(_browser_geolocation);
 
-var _geolocation_handler = require("./geolocation/geolocation_handler");
+var _geolocation_handler = require('./geolocation/geolocation_handler');
 
 var _geolocation_handler2 = _interopRequireDefault(_geolocation_handler);
 
-var _console_location_listener = require("./geolocation/listeners/console_location_listener");
+var _console_location_listener = require('./geolocation/listeners/console_location_listener');
 
 var _console_location_listener2 = _interopRequireDefault(_console_location_listener);
 
-var _marker_location_listener = require("./geolocation/listeners/marker_location_listener");
+var _marker_location_listener = require('./geolocation/listeners/marker_location_listener');
 
 var _marker_location_listener2 = _interopRequireDefault(_marker_location_listener);
 
-var _list_location_listener = require("./geolocation/listeners/list_location_listener");
+var _list_location_listener = require('./geolocation/listeners/list_location_listener');
 
 var _list_location_listener2 = _interopRequireDefault(_list_location_listener);
 
-var _simulator_handler = require("./geolocation/simulator_handler");
+var _send_to_server_location_listener = require('./geolocation/listeners/send_to_server_location_listener');
+
+var _send_to_server_location_listener2 = _interopRequireDefault(_send_to_server_location_listener);
+
+var _simulator_handler = require('./geolocation/simulator_handler');
 
 var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
+
+var _channel = require('./communication/channel');
+
+var _channel2 = _interopRequireDefault(_channel);
+
+var _message_to_location_broker = require('./communication/listeners/message_to_location_broker');
+
+var _message_to_location_broker2 = _interopRequireDefault(_message_to_location_broker);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14793,6 +14801,8 @@ var MAP_ELEMENT_ID = 'map';
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
+// import socket from "./socket"
+
 var map = new _leaflet_map2.default(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14803,7 +14813,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
-geolocation.addListener(new _marker_location_listener2.default(map));
+// geolocation.addListener(new MarkerLocationListener(map));
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
@@ -14815,10 +14825,21 @@ var renderButton = document.getElementById('render');
 var simulator = new _simulator_handler2.default();
 simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
-// add geolocaiton listeners to the simulator
+// add geolocation listeners to the simulator
 simulator.addListener(new _console_location_listener2.default());
 simulator.addListener(new _marker_location_listener2.default(map));
 simulator.addListener(listListener);
+
+// create and initialize channel with server
+var channel = new _channel2.default();
+channel.init();
+
+// add listeners related to the channel
+var sendToServerLocationListener = new _send_to_server_location_listener2.default(channel);
+geolocation.addListener(sendToServerLocationListener);
+
+var messageToLocation = new _message_to_location_broker2.default(new _marker_location_listener2.default(map));
+channel.addListener(messageToLocation);
 });
 
 require.register("web/static/js/communication/channel.js", function(exports, require, module) {
@@ -14858,6 +14879,7 @@ Channel.prototype.init = function () {
   });
 
   this.channel.on('location_message', function (payload) {
+    console.log('location_message messge received. payload:', payload);
     notify(payload, _this.listeners);
   });
 };
@@ -14872,10 +14894,31 @@ Channel.prototype.send = function (body) {
 };
 
 Channel.prototype.addListener = function (listener) {
-  this.listeners.add(listener);
+  this.listeners.push(listener);
 };
 
 exports.default = Channel;
+});
+
+require.register("web/static/js/communication/listeners/message_to_location_broker.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+// Gets a message from a channel with the server and sends it
+// to a location listener
+function MessageToLocationBroker(locationListener) {
+    this.locationListener = locationListener;
+}
+
+MessageToLocationBroker.prototype.onMessageReceived = function (body) {
+    console.log('body received in the broker', body);
+    this.locationListener.newLocation(body);
+};
+
+exports.default = MessageToLocationBroker;
 });
 
 require.register("web/static/js/geolocation/browser_geolocation.js", function(exports, require, module) {
@@ -15052,6 +15095,26 @@ MarkerLocationListener.prototype.newLocation = function (_ref) {
 };
 
 exports.default = MarkerLocationListener;
+});
+
+require.register("web/static/js/geolocation/listeners/send_to_server_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// Location listeners must implement `newLocation` method
+function SendToServerLocationListener(channel) {
+    this.channel = channel;
+}
+
+SendToServerLocationListener.prototype.newLocation = function (location) {
+    console.log('location will be sent to server:', location);
+
+    this.channel.send(location);
+};
+
+exports.default = SendToServerLocationListener;
 });
 
 require.register("web/static/js/geolocation/simulator_handler.js", function(exports, require, module) {
@@ -15269,8 +15332,8 @@ exports.default = socket;
 });
 
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
