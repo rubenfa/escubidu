@@ -14794,15 +14794,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var MAP_ELEMENT_ID = 'map';
 
 // Here starts our application
-
-
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-
 var map = new _leaflet_map2.default(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14813,7 +14804,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
-// geolocation.addListener(new MarkerLocationListener(map));
+// geolocation.addListener(new MarkerLocationListener(map)); // this is added later, to draw locations sent by the server
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
@@ -14827,7 +14818,7 @@ simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
 // add geolocation listeners to the simulator
 simulator.addListener(new _console_location_listener2.default());
-simulator.addListener(new _marker_location_listener2.default(map));
+// simulator.addListener(new MarkerLocationListener(map));  // this is added later, to draw locations sent by the server
 simulator.addListener(listListener);
 
 // create and initialize channel with server
@@ -14837,9 +14828,11 @@ channel.init();
 // add listeners related to the channel
 var sendToServerLocationListener = new _send_to_server_location_listener2.default(channel);
 geolocation.addListener(sendToServerLocationListener);
+simulator.addListener(sendToServerLocationListener);
 
-var messageToLocation = new _message_to_location_broker2.default(new _marker_location_listener2.default(map));
-channel.addListener(messageToLocation);
+// message broker
+var broker = new _message_to_location_broker2.default(new _marker_location_listener2.default(map));
+channel.addListener(broker);
 });
 
 require.register("web/static/js/communication/channel.js", function(exports, require, module) {

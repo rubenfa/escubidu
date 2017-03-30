@@ -13,13 +13,6 @@
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-
 import LeafletMap from './leaflet/leaflet_map';
 import ExampleMarkers from './leaflet/example_markers';
 import BrowserGeolocation from './geolocation/browser_geolocation';
@@ -45,7 +38,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new ConsoleLocationListener());
-// geolocation.addListener(new MarkerLocationListener(map));
+// geolocation.addListener(new MarkerLocationListener(map)); // this is added later, to draw locations sent by the server
 const ulLocations = document.getElementById('locations');
 const listListener = new ListLocationListener(ulLocations);
 geolocation.addListener(listListener);
@@ -59,7 +52,7 @@ simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
 // add geolocation listeners to the simulator
 simulator.addListener(new ConsoleLocationListener());
-simulator.addListener(new MarkerLocationListener(map));
+// simulator.addListener(new MarkerLocationListener(map));  // this is added later, to draw locations sent by the server
 simulator.addListener(listListener);
 
 // create and initialize channel with server
@@ -69,7 +62,9 @@ channel.init();
 // add listeners related to the channel
 const sendToServerLocationListener = new SendToServerLocationListener(channel);
 geolocation.addListener(sendToServerLocationListener);
+simulator.addListener(sendToServerLocationListener);
 
-const messageToLocation = new MessageToLocationBroker(new MarkerLocationListener(map));
-channel.addListener(messageToLocation);
+// message broker
+const broker = new MessageToLocationBroker(new MarkerLocationListener(map));
+channel.addListener(broker);
 
