@@ -15331,9 +15331,9 @@ channel.on('new_msg', function (payload) {
 exports.default = socket;
 });
 
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("leaflet/dist/leaflet-src.js", "leaflet");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 

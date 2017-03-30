@@ -8,13 +8,13 @@ defmodule Web.LocationChannel do
     {:error, %{reason: "unauthorized"}}
   end
 
-  def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast! socket, "new_msg", %{body: body}
+  def handle_in("location_message", %{"body" => body}, socket) do
+    broadcast! socket, "location_message", %{body: body}
     {:noreply, socket}
   end
 
-  def handle_out("new_msg", payload, socket) do
-    push socket, "new_msg", payload
+  def handle_out("location_message", payload, socket) do
+    push socket, "location_message", payload
     {:noreply, socket}
   end
 end
