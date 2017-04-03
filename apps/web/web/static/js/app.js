@@ -13,12 +13,6 @@
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
 import LeafletMap from './leaflet/leaflet_map';
 import ExampleMarkers from './leaflet/example_markers';
 import BrowserGeolocation from './geolocation/browser_geolocation';
@@ -26,7 +20,10 @@ import GeolocationHandler from './geolocation/geolocation_handler';
 import ConsoleLocationListener from './geolocation/listeners/console_location_listener';
 import MarkerLocationListener from './geolocation/listeners/marker_location_listener';
 import ListLocationListener from './geolocation/listeners/list_location_listener';
+import SendToServerLocationListener from './geolocation/listeners/send_to_server_location_listener';
 import SimulatorHandler from './geolocation/simulator_handler';
+import Channel from './communication/channel';
+import MessageToLocationBroker from './communication/listeners/message_to_location_broker';
 
 const MAP_ELEMENT_ID = 'map';
 
@@ -41,7 +38,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new ConsoleLocationListener());
-geolocation.addListener(new MarkerLocationListener(map));
+// geolocation.addListener(new MarkerLocationListener(map)); // this is added later, to draw locations sent by the server
 const ulLocations = document.getElementById('locations');
 const listListener = new ListLocationListener(ulLocations);
 geolocation.addListener(listListener);
@@ -53,8 +50,21 @@ const renderButton = document.getElementById('render');
 const simulator = new SimulatorHandler();
 simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
-// add geolocaiton listeners to the simulator
+// add geolocation listeners to the simulator
 simulator.addListener(new ConsoleLocationListener());
-simulator.addListener(new MarkerLocationListener(map));
+// simulator.addListener(new MarkerLocationListener(map));  // this is added later, to draw locations sent by the server
 simulator.addListener(listListener);
+
+// create and initialize channel with server
+const channel = new Channel();
+channel.init();
+
+// add listeners related to the channel
+const sendToServerLocationListener = new SendToServerLocationListener(channel);
+geolocation.addListener(sendToServerLocationListener);
+simulator.addListener(sendToServerLocationListener);
+
+// message broker
+const broker = new MessageToLocationBroker(new MarkerLocationListener(map));
+channel.addListener(broker);
 

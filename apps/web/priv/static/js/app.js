@@ -14760,21 +14760,24 @@ var _list_location_listener = require('./geolocation/listeners/list_location_lis
 
 var _list_location_listener2 = _interopRequireDefault(_list_location_listener);
 
+var _send_to_server_location_listener = require('./geolocation/listeners/send_to_server_location_listener');
+
+var _send_to_server_location_listener2 = _interopRequireDefault(_send_to_server_location_listener);
+
 var _simulator_handler = require('./geolocation/simulator_handler');
 
 var _simulator_handler2 = _interopRequireDefault(_simulator_handler);
 
+var _channel = require('./communication/channel');
+
+var _channel2 = _interopRequireDefault(_channel);
+
+var _message_to_location_broker = require('./communication/listeners/message_to_location_broker');
+
+var _message_to_location_broker2 = _interopRequireDefault(_message_to_location_broker);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-// import socket from "./socket"
-var MAP_ELEMENT_ID = 'map';
-
-// Here starts our application
 // Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
@@ -14788,6 +14791,9 @@ var MAP_ELEMENT_ID = 'map';
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+var MAP_ELEMENT_ID = 'map';
+
+// Here starts our application
 var map = new _leaflet_map2.default(MAP_ELEMENT_ID);
 _example_markers2.default.renderInto(map);
 
@@ -14798,7 +14804,7 @@ geolocation.configure(btnGeolocate);
 
 // Add location listeners
 geolocation.addListener(new _console_location_listener2.default());
-geolocation.addListener(new _marker_location_listener2.default(map));
+// geolocation.addListener(new MarkerLocationListener(map)); // this is added later, to draw locations sent by the server
 var ulLocations = document.getElementById('locations');
 var listListener = new _list_location_listener2.default(ulLocations);
 geolocation.addListener(listListener);
@@ -14810,10 +14816,102 @@ var renderButton = document.getElementById('render');
 var simulator = new _simulator_handler2.default();
 simulator.configure(latitudeInput, lontitudeInput, renderButton);
 
-// add geolocaiton listeners to the simulator
+// add geolocation listeners to the simulator
 simulator.addListener(new _console_location_listener2.default());
-simulator.addListener(new _marker_location_listener2.default(map));
+// simulator.addListener(new MarkerLocationListener(map));  // this is added later, to draw locations sent by the server
 simulator.addListener(listListener);
+
+// create and initialize channel with server
+var channel = new _channel2.default();
+channel.init();
+
+// add listeners related to the channel
+var sendToServerLocationListener = new _send_to_server_location_listener2.default(channel);
+geolocation.addListener(sendToServerLocationListener);
+simulator.addListener(sendToServerLocationListener);
+
+// message broker
+var broker = new _message_to_location_broker2.default(new _marker_location_listener2.default(map));
+channel.addListener(broker);
+});
+
+require.register("web/static/js/communication/channel.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _phoenix = require('phoenix');
+
+function notify(payload, listeners) {
+  listeners.forEach(function (listener) {
+    return listener.onMessageReceived(payload.body);
+  });
+}
+
+function Channel() {
+  this.connected = false;
+  this.channel = null;
+  this.listeners = [];
+}
+
+Channel.prototype.init = function () {
+  var _this = this;
+
+  var socket = new _phoenix.Socket('/locations_socket', { params: { token: window.userToken } });
+  socket.connect();
+
+  this.channel = socket.channel('location:all', {});
+  this.channel.join().receive('ok', function (resp) {
+    _this.connected = true;
+    console.log('Joined successfully', resp);
+  }).receive('error', function (resp) {
+    _this.connected = false;
+    console.log('Unable to join', resp);
+  });
+
+  this.channel.on('location_message', function (payload) {
+    console.log('location_message messge received. payload:', payload);
+    notify(payload, _this.listeners);
+  });
+};
+
+Channel.prototype.send = function (body) {
+  if (!this.connected) {
+    throw new Error('Must be connected to send messages');
+  }
+
+  var message = { body: body };
+  this.channel.push('location_message', message);
+};
+
+Channel.prototype.addListener = function (listener) {
+  this.listeners.push(listener);
+};
+
+exports.default = Channel;
+});
+
+require.register("web/static/js/communication/listeners/message_to_location_broker.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+// Gets a message from a channel with the server and sends it
+// to a location listener
+function MessageToLocationBroker(locationListener) {
+    this.locationListener = locationListener;
+}
+
+MessageToLocationBroker.prototype.onMessageReceived = function (body) {
+    console.log('body received in the broker', body);
+    this.locationListener.newLocation(body);
+};
+
+exports.default = MessageToLocationBroker;
 });
 
 require.register("web/static/js/geolocation/browser_geolocation.js", function(exports, require, module) {
@@ -14992,6 +15090,26 @@ MarkerLocationListener.prototype.newLocation = function (_ref) {
 exports.default = MarkerLocationListener;
 });
 
+require.register("web/static/js/geolocation/listeners/send_to_server_location_listener.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// Location listeners must implement `newLocation` method
+function SendToServerLocationListener(channel) {
+    this.channel = channel;
+}
+
+SendToServerLocationListener.prototype.newLocation = function (location) {
+    console.log('location will be sent to server:', location);
+
+    this.channel.send(location);
+};
+
+exports.default = SendToServerLocationListener;
+});
+
 require.register("web/static/js/geolocation/simulator_handler.js", function(exports, require, module) {
 'use strict';
 
@@ -15131,7 +15249,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _phoenix = require("phoenix");
 
-var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken } });
+var socket = new _phoenix.Socket("/locations_socket", { params: { token: window.userToken } });
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -15185,19 +15303,30 @@ var socket = new _phoenix.Socket("/socket", { params: { token: window.userToken 
 socket.connect();
 
 // Now that you are connected, you can join channels with a topic:
-var channel = socket.channel("topic:subtopic", {});
+var channel = socket.channel("location:all", {});
 channel.join().receive("ok", function (resp) {
   console.log("Joined successfully", resp);
 }).receive("error", function (resp) {
   console.log("Unable to join", resp);
 });
 
+// send a msg after 3sg
+setTimeout(function () {
+  channel.push('new_msg', { body: 'Body of the message' });
+  console.log('msg sent');
+}, 3000);
+
+// show received msgs in the console
+channel.on('new_msg', function (payload) {
+  console.log('He recibido un cuerpo de msg:', payload.body);
+});
+
 exports.default = socket;
 });
 
-;require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("leaflet/dist/leaflet-src.js", "leaflet");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("leaflet/dist/leaflet-src.js", "leaflet");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
