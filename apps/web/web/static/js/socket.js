@@ -56,19 +56,8 @@ socket.connect();
 // Now that you are connected, you can join channels with a topic:
 let channel = socket.channel("location:all", {});
 channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) });
-
-// send a msg after 3sg
-setTimeout(() => {
-  channel.push('new_msg', { body: 'Body of the message' });
-  console.log('msg sent');
-  }, 3000);
-
-// show received msgs in the console
-channel.on('new_msg', payload => {
-  console.log('He recibido un cuerpo de msg:', payload.body);
-});
+  // .receive("ok", resp => { console.log("Joined successfully", resp) })
+  .receive("error", resp => { console.error("Unable to join to channel", resp) });
 
 export default socket;
 

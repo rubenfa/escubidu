@@ -6,7 +6,6 @@ function MessageToLocationBroker (locationListener) {
 }
 
 MessageToLocationBroker.prototype.onMessageReceived = function (body) {
-    console.log('body received in the broker', body);
     this.locationListener.newLocation(body);
 };
 

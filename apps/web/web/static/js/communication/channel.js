@@ -18,15 +18,13 @@ Channel.prototype.init = function () {
   this.channel.join()
     .receive('ok', resp => {
       this.connected = true;
-      console.log('Joined successfully', resp);
     })
     .receive('error', resp => {
       this.connected = false;
-      console.log('Unable to join', resp);
+      console.error('Unable to join channel', resp);
     });
 
   this.channel.on('location_message', payload => {
-    console.log('location_message messge received. payload:', payload);
     notify(payload, this.listeners);
   });
 }
