@@ -14857,7 +14857,7 @@ Channel.prototype.init = function () {
   var socket = new _phoenix.Socket('/locations_socket', { params: { token: window.userToken } });
   socket.connect();
 
-  this.channel = socket.channel('location:all', {});
+  this.channel = socket.channel('location:everybody', {});
   this.channel.join().receive('ok', function (resp) {
     _this.connected = true;
   }).receive('error', function (resp) {
@@ -15277,7 +15277,7 @@ var socket = new _phoenix.Socket("/locations_socket", { params: { token: window.
 socket.connect();
 
 // Now that you are connected, you can join channels with a topic:
-var channel = socket.channel("location:all", {});
+var channel = socket.channel("location:everybody", {});
 channel.join()
 // .receive("ok", resp => { console.log("Joined successfully", resp) })
 .receive("error", function (resp) {

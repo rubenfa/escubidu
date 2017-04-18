@@ -14,7 +14,7 @@ Channel.prototype.init = function () {
   let socket = new Socket('/locations_socket', {params: {token: window.userToken}});
   socket.connect();
 
-  this.channel = socket.channel('location:all', {});
+  this.channel = socket.channel('location:everybody', {});
   this.channel.join()
     .receive('ok', resp => {
       this.connected = true;
