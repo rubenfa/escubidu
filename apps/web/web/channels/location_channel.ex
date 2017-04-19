@@ -1,7 +1,7 @@
 defmodule Web.LocationChannel do
   use Phoenix.Channel
 
-  def join("location:all", _message, socket) do
+  def join("location:everybody", _message, socket) do
     {:ok, socket}
   end
   def join("location:" <> _private_room_id, _params, _socket) do

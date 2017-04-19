@@ -14,19 +14,17 @@ Channel.prototype.init = function () {
   let socket = new Socket('/locations_socket', {params: {token: window.userToken}});
   socket.connect();
 
-  this.channel = socket.channel('location:all', {});
+  this.channel = socket.channel('location:everybody', {});
   this.channel.join()
     .receive('ok', resp => {
       this.connected = true;
-      console.log('Joined successfully', resp);
     })
     .receive('error', resp => {
       this.connected = false;
-      console.log('Unable to join', resp);
+      console.error('Unable to join channel', resp);
     });
 
   this.channel.on('location_message', payload => {
-    console.log('location_message messge received. payload:', payload);
     notify(payload, this.listeners);
   });
 }
