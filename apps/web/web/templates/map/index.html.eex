@@ -18,4 +18,9 @@
     </div>
 </div>
 
+<div class="shareGeolocation">
+  <button id="geolocateXXX" class="play" />
+</div>
+
 <div id="map"></div>
+

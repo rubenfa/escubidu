@@ -35,3 +35,39 @@ body {
     margin: 0 5%;
 }
 
+.shareGeolocation {
+    position: absolute;
+    top: 1rem;
+    left: 5rem;
+
+    width: 5rem;
+    height: 5rem;
+}
+
+.shareGeolocation button {
+    width: 5rem;
+    height: 5rem;
+
+    border-radius: 50%;
+    border: 0.4rem solid #cfdcec;
+
+    background: #4679BD; 
+    box-shadow: 0 0 3px gray;
+}
+
+.shareGeolocation button:hover {
+  background: #30588e;
+}
+
+.shareGeolocation button.play {
+  background-image: url('/images/play-arrow-24px.svg');
+  background-repeat: no-repeat;
+  background-size: 4.1rem;
+}
+
+.shareGeolocation button.stop {
+  background-image: url('/images/stop-black-24px.svg');
+  background-repeat: no-repeat;
+  background-size: 4.1rem;
+}
+
