@@ -12,14 +12,14 @@
     </div>
     <div class="geolocation">
         <form>
-            <button id="geolocate">Geolocate yourself</button>
+            <button id="geolocate_old">Geolocate yourself</button>
         </form>
         <ul id="locations"/>
     </div>
 </div>
 
 <div class="shareGeolocation">
-  <button id="geolocateXXX" class="play" />
+  <button id="geolocate" class="play" />
 </div>
 
 <div id="map"></div>
