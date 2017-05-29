@@ -19,9 +19,7 @@ import BrowserGeolocation from './geolocation/browser_geolocation';
 import GeolocationHandler from './geolocation/geolocation_handler';
 // import ConsoleLocationListener from './geolocation/listeners/console_location_listener';
 import MarkerLocationListener from './geolocation/listeners/marker_location_listener';
-import ListLocationListener from './geolocation/listeners/list_location_listener';
 import SendToServerLocationListener from './geolocation/listeners/send_to_server_location_listener';
-import SimulatorHandler from './geolocation/simulator_handler';
 import Channel from './communication/channel';
 import MessageToLocationBroker from './communication/listeners/message_to_location_broker';
 
@@ -35,23 +33,7 @@ ExampleMarkers.renderInto(map);
 const btnGeolocate = document.getElementById('geolocate');
 const geolocation = new GeolocationHandler(new BrowserGeolocation());
 geolocation.configure(btnGeolocate);
-
-// Add location listeners
 // geolocation.addListener(new ConsoleLocationListener());
-const ulLocations = document.getElementById('locations');
-const listListener = new ListLocationListener(ulLocations);
-geolocation.addListener(listListener);
-
-// Create and configure simulator
-const latitudeInput = document.getElementById('latitude');
-const lontitudeInput = document.getElementById('longitude');
-const renderButton = document.getElementById('render');
-const simulator = new SimulatorHandler();
-simulator.configure(latitudeInput, lontitudeInput, renderButton);
-
-// add geolocation listeners to the simulator
-// simulator.addListener(new ConsoleLocationListener());
-simulator.addListener(listListener);
 
 // create and initialize channel with server
 const channel = new Channel();
@@ -60,7 +42,6 @@ channel.init();
 // add listeners related to the channel
 const sendToServerLocationListener = new SendToServerLocationListener(channel);
 geolocation.addListener(sendToServerLocationListener);
-simulator.addListener(sendToServerLocationListener);
 
 // message broker
 const broker = new MessageToLocationBroker(new MarkerLocationListener(map));
