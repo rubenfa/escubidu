@@ -20,13 +20,13 @@ function onCurrentLocationChanged(location) {
 
 function stopWatching() {
     watching = false;
-    btnGeolocate.innerText = START_WATCHING_TEXT;
+    btnGeolocate.className = 'play';
     geolocation.reset();
 }
 
 function startWatching() {
     watching = true;
-    btnGeolocate.innerText = STOP_WATCHING_TEXT;
+    btnGeolocate.className = 'stop';
     geolocation.setLocationCallback(onCurrentLocationChanged);
 }
 
@@ -55,7 +55,7 @@ function GeolocationHandler(browserGeolocation) {
 
 GeolocationHandler.prototype.configure = function (element) {
     btnGeolocate = element;
-    btnGeolocate.innerText = START_WATCHING_TEXT;
+    btnGeolocate.className = 'play';
     btnGeolocate.addEventListener('click', onButtonGeolocateClick);
 };
 

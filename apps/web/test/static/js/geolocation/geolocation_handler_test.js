@@ -15,12 +15,12 @@ describe('GeolocationHandler', function() {
         
     describe('#configure', () => {
         
-        it('sets a new text in the toggle button', () => {
+        it('sets a new CSS class in the toggle button', () => {
             const button = new ButtonFake();
             const handler = new GeolocationHandler();
             handler.configure(button);
 
-            expect(button.innerText).toEqual('Start');
+            expect(button.className).toEqual('play');
         });
 
         it('sets an event handler to the button', () => {
@@ -36,7 +36,7 @@ describe('GeolocationHandler', function() {
   
     describe('#startWatching', () => {
 
-        it('initializes browser geolocation api when user clicks on "Start"', () => {
+        it('initializes browser geolocation api when user clicks on "Play"', () => {
             const browserGeolocation = spyBrowserGeolocation();
             const button = new ButtonFake();
             const handler = new GeolocationHandler(browserGeolocation);
@@ -47,7 +47,7 @@ describe('GeolocationHandler', function() {
             expect(browserGeolocation.setLocationCallback).toHaveBeenCalled();
         });
 
-        it('toggles buttons text to "Stop"', () => {
+        it('toggles button CSS class to "stop"', () => {
             const browserGeolocation = spyBrowserGeolocation();
             const button = new ButtonFake();
             const handler = new GeolocationHandler(browserGeolocation);
@@ -55,7 +55,7 @@ describe('GeolocationHandler', function() {
 
             button.fireEvent();
 
-            expect(button.innerText).toEqual("Stop");
+            expect(button.className).toEqual("stop");
         });
 
     });
@@ -68,27 +68,27 @@ describe('GeolocationHandler', function() {
             const handler = new GeolocationHandler(browserGeolocation);
             handler.configure(button);
 
-            button.fireEvent(); // start
+            button.fireEvent(); // play
             button.fireEvent(); // stop
 
             expect(browserGeolocation.reset).toHaveBeenCalled();
         });
 
-        it('toggles buttons text to "Start" again', () => {
+        it('toggles buttons text to "play" again', () => {
             const browserGeolocation = spyBrowserGeolocation();
             const button = new ButtonFake();
             const handler = new GeolocationHandler(browserGeolocation);
             handler.configure(button);
 
-            button.fireEvent(); // start
+            button.fireEvent(); // play
             button.fireEvent(); // stop
 
-            expect(button.innerText).toEqual('Start');
+            expect(button.className).toEqual('play');
         });
 
     });
   
-    describe('#addLister', () => {
+    describe('#addListener', () => {
 
         function spyListener() {
             return {

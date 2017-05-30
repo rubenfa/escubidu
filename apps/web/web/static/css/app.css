@@ -8,30 +8,40 @@ body {
     height: 100vh;
 }
 
-.left-panel {
-    width: 200px;
-    height: 100vh;
-    float: left;
-    border-right: solid 2px #b29ac3;
+.shareGeolocation {
+    position: absolute;
+    z-index: 401;
+    top: 1rem;
+    left: 5rem;
+
+    width: 5rem;
+    height: 5rem;
 }
 
-.simulator label {
-    width: 100%;
-    margin: 0 5%;
+.shareGeolocation button {
+    width: 5rem;
+    height: 5rem;
+
+    border-radius: 50%;
+    border: 0.4rem solid #cfdcec;
+
+    background: #4679BD; 
+    box-shadow: 0 0 3px gray;
 }
 
-.simulator input,
-.simulator button {
-    width: 90%;
-    margin: 0 5%;
+.shareGeolocation button:hover {
+  background: #30588e;
 }
 
-.geolocation {
-    margin-top: 1em;
+.shareGeolocation button.play {
+  background-image: url('/images/play-arrow-24px.svg');
+  background-repeat: no-repeat;
+  background-size: 4.1rem;
 }
 
-.geolocation button {
-    width: 90%;
-    margin: 0 5%;
+.shareGeolocation button.stop {
+  background-image: url('/images/stop-black-24px.svg');
+  background-repeat: no-repeat;
+  background-size: 4.1rem;
 }
 
